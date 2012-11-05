@@ -1,24 +1,51 @@
 #!/usr/bin/env ruby
 # --*-- encoding: utf-8 --*--
 
+require 'rubygems'
 require 'uri'
 require 'fileutils'
 require 'open-uri'
 require 'logger'
 require 'zipruby'
+require 'popen4'
+require 'yaml'
 
 if $logger.nil?
   $logger = Logger.new(STDOUT)
   $logger.level = Logger::DEBUG
 end
 
-class MrubyBuild
-  TMPDIR = (ENV["MRUBY_BUILD_TMP_DIR"] or File.join(File.dirname(__FILE__), 'tmp'))
+DIR = File.dirname(__FILE__)
 
-  def initialize(repository = 'iij/mruby', commit = 'iij')
+class MrubyBuild
+  TMPDIR = File.expand_path('../../tmp', __FILE__)
+  RESULT_DIR = File.expand_path('../../result', __FILE__)
+
+  def initialize(repository = 'iij/mruby', commit = 'iij', opts = {})
     @repository = repository
     @commit     = commit
     @zipball_path = nil
+
+    @opts = ({
+      :gcc   => 'gcc',
+      :make  => 'make',
+      :bison => 'bison',
+    }).merge((opts or {}))
+
+    @result = {
+      :date => Time.now,
+    }
+  end
+
+  def env
+    e = {}
+    e[:gcc] = sh "#{@opts[:gcc]} --version"
+    e[:gcc][:path] = @opts[:gcc]
+    e[:make] = sh "#{@opts[:make]} --version"
+    e[:make][:path] = @opts[:make]
+    e[:bison] = sh "#{@opts[:bison]} --version"
+    e[:bison][:path] = @opts[:bison]
+    e
   end
 
   def self.url(url)
@@ -33,10 +60,14 @@ class MrubyBuild
     end
   end
 
-  attr_accessor :repository, :commit, :zipball_path
+  attr_accessor :repository, :commit, :zipball_path, :workdir
 
   def ball_id
     "%s-%s-%s" % [@repository.split('/'), @commit].flatten
+  end
+
+  def hostname
+    @hostname ? @hostname : `hostname -s`.chomp.split('.').first
   end
 
   def zipball_url
@@ -54,25 +85,31 @@ class MrubyBuild
       $logger.debug('download: skip cause offline-mode')
     else
       $logger.debug('download: start')
-      tmpdir = mkdir(:download)
+      tmpdir = mktmpdir(:download)
       @zipball_path = File.join(tmpdir, 'zipball')
       File.open(@zipball_path, 'wb') do |fp|
         fp.write open(zipball_url).read
       end
       $logger.debug("download: done. #{File.size(@zipball_path)}bytes fetched.")
     end
+
+    self
   end
 
   def unzip
     if @zipball_path.nil? or (not File.exist?(@zipball_path))
+      $logger.info("zipball is not found. will downloading...")
       download
       if @zipball_path.nil? or (not File.exist?(@zipball_path))
         raise "zipball can't fetched.."
       end
     end
+    zipball_expand_path = File.expand_path(@zipball_path)
+    $logger.info("zipball: #{zipball_expand_path} will extract.")
 
-    Dir.chdir(File.dirname(@zipball_path)) do
-      Zip::Archive.open(File.basename @zipball_path) do |ar|
+    tmpdir = mktmpdir(:build)
+    Dir.chdir(tmpdir) do
+      Zip::Archive.open(zipball_expand_path) do |ar|
         ar.each do |zf|
           if zf.directory?
             FileUtils.mkdir_p(zf.name)
@@ -83,17 +120,98 @@ class MrubyBuild
             open(zf.name, 'wb') do |f|
               f << zf.read
             end
+
+            if zf.name =~ /\.sh$/
+              FileUtils.chmod(0755, zf.name)
+            end
           end
         end
       end
+      $logger.info("unzip done.")
     end
+
+    @workdir = Dir.glob("#{tmpdir}/*").sort.first
+    ball_id_ = @workdir.split("#{tmpdir}/").last
+    if ball_id_ != ball_id
+      $logger.info("ball id change to #{ball_id_} from #{ball_id}")
+      @commit = ball_id_.split('-').last
+    end
+
+    self
+  end
+
+  def sh(*cmd)
+    result = {}
+    result[:status_info] = POpen4::popen4(*cmd) do |stdout, stderr, stdin, pid|
+      result[:stdout] = stdout.read.strip
+      result[:stderr] = stderr.read.strip
+    end
+    result[:status] = result[:status_info].success? ? 'success' : 'failed'
+    result
+  end
+
+  def build(build_otps = {})
+    workdir = @workdir.sub("#{DIR}/", '')
+    Dir.chdir(@workdir) do
+      @result[:id] = ball_id
+      @result[:zipball_url] = zipball_url
+      # make
+      $logger.info("make on #{workdir}")
+      @result[:make] = sh "make"
+      $logger.debug("make done on #{workdir} (#{@result[:make][:status]})")
+      # make test
+      $logger.info("make test on #{workdir}")
+      @result[:make_test] = sh "make test"
+      {
+        :mrubytest_rb  => 'test/mrubytest.rb.report',
+        :mrubytest_mrb => 'test/mrubytest.mrb.report',
+      }.each do |key, filepath|
+        if File.exist? filepath
+          @result[:make_test][key] = File.open(filepath).read
+        end
+      end
+      $logger.debug("make test done on #{workdir} (#{@result[:make_test][:status]})")
+      if File.exist?('test/posix')
+        # posix test
+        $logger.info("posix test on #{workdir}")
+        @result[:posix_test] = sh "./test/posix/all.sh"
+        $logger.debug("posix test done on #{workdir} (#{@result[:posix_test][:status]})")
+      end
+    end
+
+    self
+  end
+
+  def save(filename = nil)
+    if @result.nil?
+      $logger.info("can't save.")
+      return
+    end
+    if filename.nil?
+      filename = "#{hostname}.#{ball_id}.yml"
+    end
+    if not File.exist? RESULT_DIR
+      FileUtils.mkdir_p RESULT_DIR
+    end
+
+    @result[:repository] = @repository
+    @result[:commit]     = @commit
+    @result[:ball_id]    = ball_id
+    @result[:hostname]   = hostname
+    @result[:env]        = env
+    @result[:opts]       = @opts
+
+    YAML.dump(@result, File.open(File.join(RESULT_DIR, filename), 'w'))
+    FileUtils.rm_r File.dirname(@workdir)
+
+    self
   end
 
   private
-  def mkdir(mode = 'download', limit = 3)
-    tmpdir = File.join(TMPDIR, "#{mode}-#{ball_id}-#{Time.now.to_i}")
+  def mktmpdir(mode = 'download', limit = 3)
+    tmpdir = File.join(TMPDIR, "#{Time.now.strftime("%Y%m%d%H%M%S")}-#{$$}-#{mode}")
     if File.exist? tmpdir
-      mkdir(mode, limit - 1)
+      mktmpdir(mode, limit - 1)
     else
       FileUtils.mkdir_p(tmpdir)
     end

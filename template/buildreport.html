@@ -1,0 +1,71 @@
+<html>
+	<head>
+		<title>mruby build & test report</title>
+	</head>
+	<body>
+		<h1>mruby build & test report (<%= id %>)</h1>
+
+		<h2>mrbtest</h2>
+		<table border="1">
+			<tr>
+				<% %w(Name Status Total OK KO Crash Time Fail Msg).each do |key| %>
+				<th><%= key %></th>
+				<% end %>
+			</tr>
+			<% reports.each do |hostname, report| %>
+			<tr>
+				<td><%= report.hostname %></td>
+				<td><%= report.status %></td>
+				<td><%= report.test[:total] %></td>
+				<td><%= report.test[:ok] %></td>
+				<td><%= report.test[:ko] %></td>
+				<td><%= report.test[:crash] %></td>
+				<td><%= report.test[:time] %></td>
+				<td><%= report.test[:fail].join('<br/>') %></td>
+				<td><%= report.test[:msg].join('<br/>') %></td>
+			</tr>
+			<% end %>
+		</table>
+
+		<% if reports.any?{|h,report| report.posix_test } %>
+		<h2>posix test</h2>
+		<table border="1">
+			<tr>
+				<% %w(Name Status Total OK KO Crash Time Fail Msg).each do |key| %>
+				<th><%= key %></th>
+				<% end %>
+			</tr>
+			<% reports.each do |hostname, report| %>
+			<% style = report.success? ? 'background-color:#99ff99' : 'background-color:#ff9999' %>
+			<tr style="<%= style %>">
+				<td><%= report.hostname %></td>
+				<td><%= report.status %></td>
+				<td><%= report.posix[:total] %></td>
+				<td><%= report.posix[:ok] %></td>
+				<td><%= report.posix[:ko] %></td>
+				<td><%= report.posix[:crash] %></td>
+				<td><%= report.posix[:time] %></td>
+				<td><%= report.posix[:fail].join('<br/>') %></td>
+				<td><%= report.posix[:msg].join('<br/>') %></td>
+			</tr>
+			<% end %>
+		</table>
+		<% end %>
+
+		<h2>environment</h2>
+		<table border='1'>
+			<tr>
+				<th>Name</th>
+				<th>software version</th>
+			</tr>
+			<% reports.each do |hostname, report| %>
+			<tr>
+				<td rowspan="3"><%= report.hostname %></td>
+				<td><b>gcc</b><br/><pre><%= report.env[:gcc][:stdout] %></pre></td>
+			</tr>
+			<tr><td><b>make</b><br/><pre><%= report.env[:make][:stdout] %></pre></td></tr>
+			<tr><td><b>bison</b><br/><pre><%= report.env[:bison][:stdout] %></pre></td></tr>
+			<% end %>
+		</table>
+	</body>
+</html>

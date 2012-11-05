@@ -1,0 +1,28 @@
+<html>
+	<head>
+		<title>mruby build & test report</title>
+	</head>
+	<body>
+		<h1>mruby build & test report (<a href="<%= url %>"><%= reponame %></a>)</h1>
+
+		<table border="1">
+			<tr>
+				<th>Hash</th>
+				<th>Comment</th>
+			</tr>
+			<% gitlog.each do |log| %>
+			<tr>
+				<% id = "#{reponame}-#{log[0]}" %>
+				<% if @reports[id] %>
+				<% status = @reports[id].any?{|hostname,rep| rep.success? } %>
+				<% style = status ? 'background-color:#99ff99' : 'background-color:#ff9999' %>
+				<td style="<%= style %>"><a href="<%= id %>.html"><%= log[0] %></a></td>
+				<% else %>
+				<td><%= log[0] %></td>
+				<% end %>
+				<td><%= log[1] %></td>
+			</tr>
+			<% end %>
+		</table>
+	</body>
+</html>
