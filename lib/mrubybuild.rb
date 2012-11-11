@@ -157,11 +157,11 @@ class MrubyBuild
       @result[:zipball_url] = zipball_url
       # make
       $logger.info("make on #{workdir}")
-      @result[:make] = sh "make"
+      @result[:make] = sh "#{@opts[:make]}"
       $logger.debug("make done on #{workdir} (#{@result[:make][:status]})")
       # make test
       $logger.info("make test on #{workdir}")
-      @result[:make_test] = sh "make test"
+      @result[:make_test] = sh "#{@opts[:make]} test"
       {
         :mrubytest_rb  => 'test/mrubytest.rb.report',
         :mrubytest_mrb => 'test/mrubytest.mrb.report',
