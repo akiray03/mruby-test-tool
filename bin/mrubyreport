@@ -1,6 +1,9 @@
 #!/usr/bin/env ruby
 # --*-- encoding: utf-8 --*--
 
+require 'openssl'
+# OpenSSL::SSL::VERIFY_PEER = OpenSSL::SSL::VERIFY_NONE
+
 $LOAD_PATH.unshift File.expand_path('../../lib', __FILE__)
 
 require 'mrubyreport'

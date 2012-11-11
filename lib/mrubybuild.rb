@@ -26,11 +26,11 @@ class MrubyBuild
     @commit     = commit
     @zipball_path = nil
 
-    @opts = ({
-      :gcc   => 'gcc',
-      :make  => 'make',
-      :bison => 'bison',
-    }).merge((opts or {}))
+    @opts = {
+      :gcc   => (ENV['gcc']   or 'gcc'),
+      :make  => (ENV['make']  or 'make'),
+      :bison => (ENV['bison'] or 'bison'),
+    }
 
     @result = {
       :date => Time.now,
