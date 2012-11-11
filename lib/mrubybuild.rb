@@ -27,9 +27,9 @@ class MrubyBuild
     @zipball_path = nil
 
     @opts = {
-      :gcc   => (ENV['gcc']   or 'gcc'),
-      :make  => (ENV['make']  or 'make'),
-      :bison => (ENV['bison'] or 'bison'),
+      :gcc   => (ENV['GCC']   or ENV['gcc']   or 'gcc'),
+      :make  => (ENV['MAKE']  or ENV['make']  or 'make'),
+      :bison => (ENV['BISON'] or ENV['bison'] or 'bison'),
     }
 
     @result = {
