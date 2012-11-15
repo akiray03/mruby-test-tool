@@ -67,7 +67,7 @@ class MrubyBuild
   end
 
   def hostname
-    @hostname ? @hostname : `hostname -s`.chomp.split('.').first
+    ENV['NAME'] or ENV['name'] or `hostname -s`.chomp.split('.').first
   end
 
   def zipball_url
