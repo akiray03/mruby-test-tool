@@ -202,7 +202,10 @@ class MrubyBuild
     @result[:opts]       = @opts
 
     YAML.dump(@result, File.open(File.join(RESULT_DIR, filename), 'w'))
-    FileUtils.rm_r File.dirname(@workdir)
+
+    # cleanup
+    FileUtils.rm_r File.dirname(@workdir)       if File.exist? @workdir
+    FileUtils.rm_r File.dirname(@zipball_path)  if File.exist? @zipball_path
 
     self
   end
