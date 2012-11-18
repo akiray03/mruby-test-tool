@@ -2,7 +2,9 @@
 # --*-- encoding: utf-8 --*--
 
 require 'openssl'
-# OpenSSL::SSL::VERIFY_PEER = OpenSSL::SSL::VERIFY_NONE
+if ENV['SSL_VERIFY_NONE'] == 'yes'
+  OpenSSL::SSL::VERIFY_PEER = OpenSSL::SSL::VERIFY_NONE
+end
 
 $LOAD_PATH.unshift File.expand_path('../../lib', __FILE__)
 require 'mrubybuild'

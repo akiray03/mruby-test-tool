@@ -67,7 +67,7 @@ class MrubyBuild
   end
 
   def hostname
-    @hostname ? @hostname : `hostname -s`.chomp.split('.').first
+    ENV['NAME'] or ENV['name'] or `hostname -s`.chomp.split('.').first
   end
 
   def zipball_url
@@ -84,7 +84,7 @@ class MrubyBuild
     elsif $offline_mode
       $logger.debug('download: skip cause offline-mode')
     else
-      $logger.debug('download: start')
+      $logger.debug('download: start URL:' + zipball_url)
       tmpdir = mktmpdir(:download)
       @zipball_path = File.join(tmpdir, 'zipball')
       File.open(@zipball_path, 'wb') do |fp|
@@ -133,7 +133,7 @@ class MrubyBuild
     @workdir = Dir.glob("#{tmpdir}/*").sort.first
     ball_id_ = @workdir.split("#{tmpdir}/").last
     if ball_id_ != ball_id
-      $logger.info("ball id change to #{ball_id_} from #{ball_id}")
+      $logger.info("ball id change from #{ball_id} to #{ball_id_}")
       @commit = ball_id_.split('-').last
     end
 
@@ -202,7 +202,23 @@ class MrubyBuild
     @result[:opts]       = @opts
 
     YAML.dump(@result, File.open(File.join(RESULT_DIR, filename), 'w'))
-    FileUtils.rm_r File.dirname(@workdir)
+    $logger.info("save done: #{filename}")
+
+    # cleanup
+    $logger.debug("cleanup start.")
+    if File.exist? File.dirname(@workdir)
+      $logger.debug("workdir:#{File.dirname @workdir} is cleaning...")
+      FileUtils.rm_r File.dirname(@workdir)
+    else
+      $logger.debug("workdir:#{File.dirname @workdir} is not found. cleanup skip.")
+    end
+    if File.exist? File.dirname(@zipball_path)
+      $logger.debug("workdir:#{File.dirname @zipball_path} is cleaning...")
+      FileUtils.rm_r File.dirname(@zipball_path)
+    else
+      $logger.debug("workdir:#{File.dirname @workdir} is not found. cleanup skip.")
+    end
+    $logger.debug("cleanup done.")
 
     self
   end
