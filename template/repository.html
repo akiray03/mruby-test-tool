@@ -14,7 +14,7 @@
 			<tr>
 				<% id = "#{reponame}-#{log[0]}" %>
 				<% if @reports[id] %>
-				<% status = @reports[id].any?{|hostname,rep| rep.success? } %>
+				<% status = @reports[id].all?{|hostname,rep| rep.success? } %>
 				<% style = status ? 'background-color:#99ff99' : 'background-color:#ff9999' %>
 				<td style="<%= style %>"><a href="<%= id %>.html"><%= log[0] %></a></td>
 				<% else %>
