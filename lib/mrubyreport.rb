@@ -259,7 +259,7 @@ class MrubyReportGenerator
 
     FileUtils.rm_r @workdir
 
-    self
+    "done."
   end
 
   private
