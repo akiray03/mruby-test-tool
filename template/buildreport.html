@@ -9,16 +9,17 @@
 		<h2>mrbtest</h2>
 		<table border="1">
 			<tr>
-				<% %w(Name Status Total OK KO Crash Time Fail Msg).each do |key| %>
+				<% %w(Name Build-Status Mrbtest-Status Total OK KO Crash Time Fail Msg).each do |key| %>
 				<th><%= key %></th>
 				<% end %>
 			</tr>
 			<% reports.keys.sort.each do |hostname| %>
 			<% report = reports[hostname] %>
-			<% style = report.success? ? 'background-color:#99ff99' : 'background-color:#ff9999' %>
+			<% style = (report.make[:status] == 'success' and report.make_test[:status] == 'success') ? 'background-color:#99ff99' : 'background-color:#ff9999' %>
 			<tr style="<%= style %>">
 				<td><%= report.hostname %></td>
-				<td><%= report.status %></td>
+				<td><%= report.make[:status] %></td>
+				<td><%= report.test[:status] %></td>
 				<td><%= report.test[:total] %></td>
 				<td><%= report.test[:ok] %></td>
 				<td><%= report.test[:ko] %></td>
@@ -40,7 +41,7 @@
 			</tr>
 			<% reports.keys.sort.each do |hostname| %>
 			<% report = reports[hostname] %>
-			<% style = report.success? ? 'background-color:#99ff99' : 'background-color:#ff9999' %>
+			<% style = report.posix[:status] == 'success' ? 'background-color:#99ff99' : 'background-color:#ff9999' %>
 			<tr style="<%= style %>">
 				<td><%= report.hostname %></td>
 				<td><%= report.status %></td>
