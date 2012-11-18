@@ -1,5 +1,6 @@
 <html>
 	<head>
+		<meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
 		<title>mruby build & test report</title>
 	</head>
 	<body>
@@ -12,8 +13,10 @@
 				<th><%= key %></th>
 				<% end %>
 			</tr>
-			<% reports.each do |hostname, report| %>
-			<tr>
+			<% reports.keys.sort.each do |hostname| %>
+			<% report = reports[hostname] %>
+			<% style = report.success? ? 'background-color:#99ff99' : 'background-color:#ff9999' %>
+			<tr style="<%= style %>">
 				<td><%= report.hostname %></td>
 				<td><%= report.status %></td>
 				<td><%= report.test[:total] %></td>
@@ -35,7 +38,8 @@
 				<th><%= key %></th>
 				<% end %>
 			</tr>
-			<% reports.each do |hostname, report| %>
+			<% reports.keys.sort.each do |hostname| %>
+			<% report = reports[hostname] %>
 			<% style = report.success? ? 'background-color:#99ff99' : 'background-color:#ff9999' %>
 			<tr style="<%= style %>">
 				<td><%= report.hostname %></td>
