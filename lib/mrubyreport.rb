@@ -202,6 +202,8 @@ class MrubyReportGenerator
 
     @buildreport_template = File.join(DIR, "..", "template", "buildreport.html.erb")
     @repository_template = File.join(DIR, "..", "template", "repository.html.erb")
+    @index_template = File.join(DIR, "..", "template", "index.html.erb")
+    @frame_menu_template = File.join(DIR, "..", "template", "frame_menu.html.erb")
   end
 
   def load_files
@@ -270,6 +272,16 @@ class MrubyReportGenerator
       File.open(filepath, 'w') do |fp|
         fp.write ERB.new(File.open(@repository_template).read).result(binding)
       end
+    end
+
+    filepath = File.join(REPORT_DIR, "index.html")
+    File.open(filepath, 'w') do |fp|
+      fp.write ERB.new(File.open(@index_template).read).result(binding)
+    end
+
+    filepath = File.join(REPORT_DIR, "frame_menu.html")
+    File.open(filepath, 'w') do |fp|
+      fp.write ERB.new(File.open(@frame_menu_template).read).result(binding)
     end
 
     FileUtils.rm_r @workdir
