@@ -14,6 +14,7 @@ if $logger.nil?
   $logger.level = Logger::DEBUG
 end
 
+LOG_MAX = 50
 DIR = File.dirname(__FILE__)
 
 class MrubyReport
@@ -191,6 +192,7 @@ class MrubyReportGenerator
   def initialize(opts = {})
     @opts = ({
       :git => 'git',
+      :repositories => {},
     }).merge((opts or {}))
     @files = Dir.glob("#{RESULT_DIR}/*.yml")
 
@@ -228,11 +230,25 @@ class MrubyReportGenerator
         `git clone #{url} #{reponame}`
         gitlog = []
         Dir.chdir(reponame) do
-          `git log --oneline`.split("\n").each do |line|
+          `git log --oneline -n #{LOG_MAX}`.split("\n").each do |line|
             gitlog << line.split("\s", 2)
           end
         end
         @gitlog[reponame] = {:url => url, :gitlog => gitlog}
+
+        if @opts[:repositories][reponame]
+          branches = @opts[:repositories][reponame]
+          branches.each do |branch|
+            gitlog = []
+            Dir.chdir(reponame) do
+              `git checkout #{branch}`
+              `git log --oneline -n #{LOG_MAX}`.split("\n").each do |line|
+                gitlog << line.split("\s", 2)
+              end
+            end
+            @gitlog["#{reponame}-#{branch}"] = {:url => url, :gitlog => gitlog}
+          end
+        end
       end
     end
   end

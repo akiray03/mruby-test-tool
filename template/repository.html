@@ -4,7 +4,7 @@
 	</head>
 	<body>
 		<h1>mruby build & test report (<a href="<%= url %>"><%= reponame %></a>)</h1>
-
+		<% reponame = reponame.split('-')[0, 2].join('-')  if reponame.split('-').size >= 3 %>
 		<table border="1">
 			<tr>
 				<th>Hash</th>

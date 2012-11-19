@@ -9,8 +9,21 @@ $LOAD_PATH.unshift File.expand_path('../../lib', __FILE__)
 require 'mrubyreport'
 
 if $0 == __FILE__
-  m = MrubyReportGenerator.new
-  p m.report
+  opts = {}
+
+  if ARGV.size > 0
+    repos = {}
+    ARGV.each do |id|
+      user, repo, branch = id.split('-')
+      reponame = "#{user}-#{repo}"
+      repos[reponame] = [] unless repos[reponame]
+      repos[reponame] << branch
+    end
+    opts[:repositories] = repos
+  end
+
+  m = MrubyReportGenerator.new(opts)
+  puts m.report
 end
 
 
