@@ -21,6 +21,13 @@ if $0 == __FILE__
   end
   m = MrubyBuild.new(*args)
   #m.zipball_path = 'spec/iij.zip'
-  m.unzip.build.save
+  m.unzip
+  if m.result_exist?
+    m.cleanup
+    puts "build & test is skip. because result already exist."
+  else
+    m.build.save
+    puts "build & test & save done."
+  end
 end
 

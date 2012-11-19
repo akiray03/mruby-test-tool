@@ -182,13 +182,25 @@ class MrubyBuild
     self
   end
 
+  def result_filename
+    "#{hostname}.#{ball_id}.yml"
+  end
+
+  def result_filepath
+    File.join(RESULT_DIR, result_filename)
+  end
+
+  def result_exist?
+    File.exist? result_filepath
+  end
+
   def save(filename = nil)
     if @result.nil?
       $logger.info("can't save.")
       return
     end
     if filename.nil?
-      filename = "#{hostname}.#{ball_id}.yml"
+      filename = result_filename
     end
     if not File.exist? RESULT_DIR
       FileUtils.mkdir_p RESULT_DIR
@@ -201,10 +213,15 @@ class MrubyBuild
     @result[:env]        = env
     @result[:opts]       = @opts
 
-    YAML.dump(@result, File.open(File.join(RESULT_DIR, filename), 'w'))
+    YAML.dump(@result, File.open(result_filepath, 'w'))
     $logger.info("save done: #{filename}")
 
-    # cleanup
+    cleanup
+
+    self
+  end
+
+  def cleanup
     $logger.debug("cleanup start.")
     if File.exist? File.dirname(@workdir)
       $logger.debug("workdir:#{File.dirname @workdir} is cleaning...")
@@ -219,8 +236,6 @@ class MrubyBuild
       $logger.debug("workdir:#{File.dirname @workdir} is not found. cleanup skip.")
     end
     $logger.debug("cleanup done.")
-
-    self
   end
 
   private
