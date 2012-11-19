@@ -16,6 +16,7 @@ if $logger.nil?
 end
 
 DIR = File.dirname(__FILE__)
+ENV['LANG'] = 'C'
 
 class MrubyBuild
   TMPDIR = File.expand_path('../../tmp', __FILE__)
