@@ -10,6 +10,12 @@
         white-space: pre-wrap;      /* CSS3 */
         word-wrap: break-word;      /* IE 5.5+ */
       }
+      textarea {
+        width: 100%;
+        height: 400px;
+        font-family: monospace !important;
+        font-size: 12px !important;
+      }
     </style>
   </head>
   <body>
@@ -78,41 +84,41 @@
         <% report = reports[hostname] %>
         <tr>
           <td rowspan="3"><%= report.hostname %></td>
-                                <td><b>gcc</b><br/><pre><%= report.env[:gcc][:stdout] %></pre></td>
-          </tr>
-                        <tr><td><b>make</b><br/><pre><%= report.env[:make][:stdout] %></pre></td></tr>
-                        <tr><td><b>bison</b><br/><pre><%= report.env[:bison][:stdout] %></pre></td></tr>
-                      <% end %>
-                    </table>
+          <td><b>gcc</b><br/><pre><%= report.env[:gcc][:stdout] %></pre></td>
+        </tr>
+        <tr><td><b>make</b><br/><pre><%= report.env[:make][:stdout] %></pre></td></tr>
+        <tr><td><b>bison</b><br/><pre><%= report.env[:bison][:stdout] %></pre></td></tr>
+      <% end %>
+    </table>
 
-                    <h2>Build Log</h2>
-                    <% reports.keys.sort.each do |hostname| %>
-                      <% report = reports[hostname] %>
-                      <h3><a name="<%= hostname %>"><%= hostname %></a></h3>
-                      <table border='1'>
-                        <tr>
-                          <th>task</th>
-                          <th>stdout</th>
-                          <th>stderr</th>
-                        </tr>
-                        <tr>
-                          <th>make</th>
-                                <td><pre><%= report.make[:stdout] %></pre></td>
-                                <td><pre><%= report.make[:stderr] %></pre></td>
-                                </tr>
-                                <tr>
-                                  <th>make test</th>
-                                <td><pre><%= report.make_test[:stdout].gsub('.'*100, '.'*100 + ' ') %></pre></td>
-                                <td><pre><%= report.make_test[:stderr] %></pre></td>
-                                </tr>
-                                <% if report.posix %>
-                                  <tr>
-                                    <th>posix test</th>
-                                        <td><pre><%= report.posix[:stdout] %></pre></td>
-                                        <td><pre><%= report.posix[:stderr] %></pre></td>
-                                        </tr>
-                                      <% end %>
-                                    </table>
-                                  <% end %>
-                                </body>
-                              </html>
+    <h2>Build Log</h2>
+    <% reports.keys.sort.each do |hostname| %>
+      <% report = reports[hostname] %>
+      <h3><a name="<%= hostname %>"><%= hostname %></a></h3>
+      <table border='1' style="width:90%;">
+        <tr>
+          <th style="width:100px;">task</th>
+          <th>stdout</th>
+          <th>stderr</th>
+        </tr>
+        <tr>
+          <th>make</th>
+          <td><textarea><%= report.make[:stdout] %></textarea></td>
+          <td><textarea><%= report.make[:stderr] %></textarea></td>
+        </tr>
+        <tr>
+          <th>make test</th>
+          <td><textarea><%= report.make_test[:stdout] %></textarea></td>
+          <td><textarea><%= report.make_test[:stderr] %></textarea></td>
+        </tr>
+        <% if report.posix %>
+          <tr>
+            <th>posix test</th>
+            <td><textarea><%= report.posix[:stdout] %></textarea></td>
+            <td><textarea><%= report.posix[:stderr] %></textarea></td>
+          </tr>
+        <% end %>
+      </table>
+    <% end %>
+  </body>
+</html>
