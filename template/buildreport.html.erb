@@ -1,116 +1,116 @@
 <html>
-	<head>
-		<meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
-		<title>mruby build & test report</title>
-		<style>
-			pre {
-				white-space: -moz-pre-wrap; /* Mozilla */
-				white-space: -pre-wrap;     /* Opera 4-6 */
-				white-space: -o-pre-wrap;   /* Opera 7 */
-				white-space: pre-wrap;      /* CSS3 */
-				word-wrap: break-word;      /* IE 5.5+ */
-			}
-		</style>
-	</head>
-	<body>
-		<h1>mruby build & test report (<%= id %>)</h1>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <title>mruby build & test report</title>
+    <style>
+      pre {
+        white-space: -moz-pre-wrap; /* Mozilla */
+        white-space: -pre-wrap;     /* Opera 4-6 */
+        white-space: -o-pre-wrap;   /* Opera 7 */
+        white-space: pre-wrap;      /* CSS3 */
+        word-wrap: break-word;      /* IE 5.5+ */
+      }
+    </style>
+  </head>
+  <body>
+    <h1>mruby build & test report (<%= id %>)</h1>
 
-		<h2>mrbtest</h2>
-		<table border="1">
-			<tr>
-				<% %w(Name Build-Status Mrbtest-Status Total OK KO Crash Time Fail Msg).each do |key| %>
-				<th><%= key %></th>
-				<% end %>
-			</tr>
-			<% reports.keys.sort.each do |hostname| %>
-			<% report = reports[hostname] %>
-			<% style = (report.make[:status] == 'success' and report.make_test[:status] == 'success') ? 'background-color:#99ff99' : 'background-color:#ff9999' %>
-			<tr style="<%= style %>">
-				<td><a href="#<%= report.hostname %>"><%= report.hostname %></a></td>
-				<td><%= report.make[:status] %></td>
-				<td><%= report.test[:status] %></td>
-				<td><%= report.test[:total] %></td>
-				<td><%= report.test[:ok] %></td>
-				<td><%= report.test[:ko] %></td>
-				<td><%= report.test[:crash] %></td>
-				<td><%= report.test[:time] %></td>
-				<td><%= report.test[:fail].join('<br/>') %></td>
-				<td><%= report.test[:msg].join('<br/>') %></td>
-			</tr>
-			<% end %>
-		</table>
+    <h2>mrbtest</h2>
+    <table border="1">
+      <tr>
+        <% %w(Name Build-Status Mrbtest-Status Total OK KO Crash Time Fail Msg).each do |key| %>
+          <th><%= key %></th>
+        <% end %>
+      </tr>
+      <% reports.keys.sort.each do |hostname| %>
+        <% report = reports[hostname] %>
+        <% style = (report.make[:status] == 'success' and report.make_test[:status] == 'success') ? 'background-color:#99ff99' : 'background-color:#ff9999' %>
+        <tr style="<%= style %>">
+          <td><a href="#<%= report.hostname %>"><%= report.hostname %></a></td>
+          <td><%= report.make[:status] %></td>
+          <td><%= report.test[:status] %></td>
+          <td><%= report.test[:total] %></td>
+          <td><%= report.test[:ok] %></td>
+          <td><%= report.test[:ko] %></td>
+          <td><%= report.test[:crash] %></td>
+          <td><%= report.test[:time] %></td>
+          <td><%= report.test[:fail].join('<br/>') %></td>
+          <td><%= report.test[:msg].join('<br/>') %></td>
+        </tr>
+      <% end %>
+    </table>
 
-		<% if reports.any?{|h,report| report.posix_test } %>
-		<h2>posix test</h2>
-		<table border="1">
-			<tr>
-				<% %w(Name Status Total OK KO Crash Time Fail Msg).each do |key| %>
-				<th><%= key %></th>
-				<% end %>
-			</tr>
-			<% reports.keys.sort.each do |hostname| %>
-			<% report = reports[hostname] %>
-			<% style = report.posix[:status] == 'success' ? 'background-color:#99ff99' : 'background-color:#ff9999' %>
-			<tr style="<%= style %>">
-				<td><a href="#<%= report.hostname %>"><%= report.hostname %></a></td>
-				<td><%= report.status %></td>
-				<td><%= report.posix[:total] %></td>
-				<td><%= report.posix[:ok] %></td>
-				<td><%= report.posix[:ko] %></td>
-				<td><%= report.posix[:crash] %></td>
-				<td><%= report.posix[:time] %></td>
-				<td><%= report.posix[:fail].join('<br/>') %></td>
-				<td><%= report.posix[:msg].join('<br/>') %></td>
-			</tr>
-			<% end %>
-		</table>
-		<% end %>
+    <% if reports.any?{|h,report| report.posix_test } %>
+      <h2>posix test</h2>
+      <table border="1">
+        <tr>
+          <% %w(Name Status Total OK KO Crash Time Fail Msg).each do |key| %>
+            <th><%= key %></th>
+          <% end %>
+        </tr>
+        <% reports.keys.sort.each do |hostname| %>
+          <% report = reports[hostname] %>
+          <% style = report.posix[:status] == 'success' ? 'background-color:#99ff99' : 'background-color:#ff9999' %>
+          <tr style="<%= style %>">
+            <td><a href="#<%= report.hostname %>"><%= report.hostname %></a></td>
+            <td><%= report.status %></td>
+            <td><%= report.posix[:total] %></td>
+            <td><%= report.posix[:ok] %></td>
+            <td><%= report.posix[:ko] %></td>
+            <td><%= report.posix[:crash] %></td>
+            <td><%= report.posix[:time] %></td>
+            <td><%= report.posix[:fail].join('<br/>') %></td>
+            <td><%= report.posix[:msg].join('<br/>') %></td>
+          </tr>
+        <% end %>
+      </table>
+    <% end %>
 
-		<h2>environment</h2>
-		<table border='1'>
-			<tr>
-				<th>Name</th>
-				<th>software version</th>
-			</tr>
-			<% reports.keys.sort.each do |hostname| %>
-			<% report = reports[hostname] %>
-			<tr>
-				<td rowspan="3"><%= report.hostname %></td>
-				<td><b>gcc</b><br/><pre><%= report.env[:gcc][:stdout] %></pre></td>
-			</tr>
-			<tr><td><b>make</b><br/><pre><%= report.env[:make][:stdout] %></pre></td></tr>
-			<tr><td><b>bison</b><br/><pre><%= report.env[:bison][:stdout] %></pre></td></tr>
-			<% end %>
-		</table>
+    <h2>environment</h2>
+    <table border='1'>
+      <tr>
+        <th>Name</th>
+        <th>software version</th>
+      </tr>
+      <% reports.keys.sort.each do |hostname| %>
+        <% report = reports[hostname] %>
+        <tr>
+          <td rowspan="3"><%= report.hostname %></td>
+                                <td><b>gcc</b><br/><pre><%= report.env[:gcc][:stdout] %></pre></td>
+          </tr>
+                        <tr><td><b>make</b><br/><pre><%= report.env[:make][:stdout] %></pre></td></tr>
+                        <tr><td><b>bison</b><br/><pre><%= report.env[:bison][:stdout] %></pre></td></tr>
+                      <% end %>
+                    </table>
 
-		<h2>Build Log</h2>
-		<% reports.keys.sort.each do |hostname| %>
-		<% report = reports[hostname] %>
-		<h3><a name="<%= hostname %>"><%= hostname %></a></h3>
-		<table border='1'>
-			<tr>
-				<th>task</th>
-				<th>stdout</th>
-				<th>stderr</th>
-			</tr>
-			<tr>
-				<th>make</th>
-				<td><pre><%= report.make[:stdout] %></pre></td>
-				<td><pre><%= report.make[:stderr] %></pre></td>
-			</tr>
-			<tr>
-				<th>make test</th>
-				<td><pre><%= report.make_test[:stdout].gsub('.'*100, '.'*100 + ' ') %></pre></td>
-				<td><pre><%= report.make_test[:stderr] %></pre></td>
-			</tr>
-			<% if report.posix %>
-				<tr>
-					<th>posix test</th>
-					<td><pre><%= report.posix[:stdout] %></pre></td>
-					<td><pre><%= report.posix[:stderr] %></pre></td>
-				</tr>
-			<% end %>
-		</table>
-		<% end %>
-	</body>
-</html>
+                    <h2>Build Log</h2>
+                    <% reports.keys.sort.each do |hostname| %>
+                      <% report = reports[hostname] %>
+                      <h3><a name="<%= hostname %>"><%= hostname %></a></h3>
+                      <table border='1'>
+                        <tr>
+                          <th>task</th>
+                          <th>stdout</th>
+                          <th>stderr</th>
+                        </tr>
+                        <tr>
+                          <th>make</th>
+                                <td><pre><%= report.make[:stdout] %></pre></td>
+                                <td><pre><%= report.make[:stderr] %></pre></td>
+                                </tr>
+                                <tr>
+                                  <th>make test</th>
+                                <td><pre><%= report.make_test[:stdout].gsub('.'*100, '.'*100 + ' ') %></pre></td>
+                                <td><pre><%= report.make_test[:stderr] %></pre></td>
+                                </tr>
+                                <% if report.posix %>
+                                  <tr>
+                                    <th>posix test</th>
+                                        <td><pre><%= report.posix[:stdout] %></pre></td>
+                                        <td><pre><%= report.posix[:stderr] %></pre></td>
+                                        </tr>
+                                      <% end %>
+                                    </table>
+                                  <% end %>
+                                </body>
+                              </html>
