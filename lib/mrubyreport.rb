@@ -200,9 +200,8 @@ class MrubyReportGenerator
       FileUtils.mkdir_p REPORT_DIR
     end
 
-    @html_report = File.join(REPORT_DIR, "report.html")
-    @buildreport_template = File.join(DIR, "..", "template", "buildreport.html")
-    @repository_template = File.join(DIR, "..", "template", "repository.html")
+    @buildreport_template = File.join(DIR, "..", "template", "buildreport.html.erb")
+    @repository_template = File.join(DIR, "..", "template", "repository.html.erb")
   end
 
   def load_files
