@@ -59,7 +59,7 @@ class MrubyReport
       result << data[:mrubytest_mrb]
     end
 
-    File.open("t", "w") do |fp|
+    File.open("t-#{@repository.sub('/', '-')}", "w") do |fp|
       fp.puts result.join("\n").split("\n")
     end
     test = msg_parser(result.join("\n").split("\n"))
