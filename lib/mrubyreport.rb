@@ -49,11 +49,14 @@ class MrubyReport
       flag = (line == "./mrbtest")  unless flag
     end
 
+    mrbtest_header = 'mrbtest - Embeddable Ruby Test'
     result = ["# exec mrbtest", "dummy dots line"]
-    if mrbtest[0] == 'mrbtest - Embeddable Ruby Test'
+    if mrbtest[0] == mrbtest_header
       result << mrbtest[6, mrbtest.size]
     else
-      result << mrbtest
+      pos = mrbtest.index(mrbtest_header)
+      pos = mrbtest.size  if pos.nil? or pos < 1 or pos > mrbtest.size
+      result << mrbtest[1..(pos-1)]
     end
     if data[:mrubytest_rb]
       result << "# exec mruby test with ruby script"
