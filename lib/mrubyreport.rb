@@ -49,7 +49,12 @@ class MrubyReport
       flag = (line == "./mrbtest")  unless flag
     end
 
-    result = ["# exec mrbtest", "dummy dots line", mrbtest[6, mrbtest.size]]
+    result = ["# exec mrbtest", "dummy dots line"]
+    if mrbtest[0] == 'mrbtest - Embeddable Ruby Test'
+      result << mrbtest[6, mrbtest.size]
+    else
+      result << mrbtest
+    end
     if data[:mrubytest_rb]
       result << "# exec mruby test with ruby script"
       result << data[:mrubytest_rb]
@@ -59,9 +64,6 @@ class MrubyReport
       result << data[:mrubytest_mrb]
     end
 
-    File.open("t-#{@repository.sub('/', '-')}", "w") do |fp|
-      fp.puts result.join("\n").split("\n")
-    end
     test = msg_parser(result.join("\n").split("\n"))
 
     data.merge(test)
