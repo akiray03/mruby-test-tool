@@ -263,9 +263,15 @@ class MrubyReportGenerator
     load_files
     analyze_git
 
+    if File.exist? REPORT_DIR
+      FileUtils.rm_r REPORT_DIR
+    end
+    FileUtils.mkdir_p REPORT_DIR
+
     @reports.each do |id, reports|
       filepath = File.join(REPORT_DIR, "#{id}.html")
       File.open(filepath, 'w') do |fp|
+        puts filepath
         fp.write ERB.new(File.open(@buildreport_template).read).result(binding)
       end
     end
