@@ -20,10 +20,18 @@
   </head>
   <body>
     <h1>mruby build & test report</h1>
-    <a href="<%= id %>.html">back to list</a>
+
     <% user, repo, comm = id.split('-') %>
     <% url = "http://github.com/#{user}/#{repo}/commit/#{comm}" %>
-    <a href="<%= url %>" target="_blank">commit info <%= id %> (on github)</a>
+    <ul>
+      <li><a href="<%= url %>" target="_blank">commit info on github</a></li>
+      <% @gitlog.each do |reponame, val| %>
+        <% next unless reponame == "#{user}-#{repo}" %>
+        <% if val[:gitlog].map{|v| v[0] }.include?(comm) %>
+          <li><a href="<%= reponame %>.html">back to <%= reponame %></a></li>
+        <% end %>
+      <% end %>
+  </ul>
 
     <h2>mrbtest</h2>
     <table border="1">
