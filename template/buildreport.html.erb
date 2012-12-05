@@ -19,10 +19,11 @@
     </style>
   </head>
   <body>
+    <h1>mruby build & test report</h1>
+    <a href="<%= id %>.html">back to list</a>
     <% user, repo, comm = id.split('-') %>
     <% url = "http://github.com/#{user}/#{repo}/commit/#{comm}" %>
-    <h1>mruby build & test report (<a href="<%= url %>" target="_blank"><%= id %></a>)</h1>
-    <a href="#{id}.html">back to list</a>
+    <a href="<%= url %>" target="_blank">commit info <%= id %> (on github)</a>
 
     <h2>mrbtest</h2>
     <table border="1">
