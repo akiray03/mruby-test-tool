@@ -156,6 +156,10 @@ class MrubyBuild
     Dir.chdir(@workdir) do
       @result[:id] = ball_id
       @result[:zipball_url] = zipball_url
+      if ENV['BEFORE_MAKE']
+        $logger.debug("exec before make: #{ENV['BEFORE_MAKE']}")
+        sh ENV['BEFORE_MAKE']
+      end
       # make
       $logger.info("make on #{workdir}")
       @result[:make] = sh "#{@opts[:make]}"
