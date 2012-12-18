@@ -123,7 +123,7 @@ class MrubyBuild
               f << zf.read
             end
 
-            if zf.name =~ /\.sh$/ or zf.name == /minirake$/
+            if zf.name =~ /\.sh$/ or zf.name =~ /minirake$/
               FileUtils.chmod(0755, zf.name)
             end
           end
