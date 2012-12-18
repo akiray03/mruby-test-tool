@@ -28,6 +28,7 @@ class MrubyBuild
     @zipball_path = nil
 
     @opts = {
+      :ruby  => (ENV['RUBY']  or ENV['ruby']  or 'ruby'),
       :gcc   => (ENV['GCC']   or ENV['gcc']   or 'gcc'),
       :make  => (ENV['MAKE']  or ENV['make']  or 'make'),
       :bison => (ENV['BISON'] or ENV['bison'] or 'bison'),
@@ -158,11 +159,11 @@ class MrubyBuild
       @result[:zipball_url] = zipball_url
       # make
       $logger.info("make on #{workdir}")
-      @result[:make] = sh "#{@opts[:make]}"
+      @result[:make] = sh "#{@opts[:ruby]} ./minirake"
       $logger.debug("make done on #{workdir} (#{@result[:make][:status]})")
       # make test
       $logger.info("make test on #{workdir}")
-      @result[:make_test] = sh "#{@opts[:make]} test"
+      @result[:make_test] = sh "#{@opts[:ruby]} ./minirake test"
       {
         :mrubytest_rb  => 'test/mrubytest.rb.report',
         :mrubytest_mrb => 'test/mrubytest.mrb.report',
