@@ -49,7 +49,15 @@ class MrubyReport
       flag = (line == "./mrbtest")  unless flag
     end
 
-    result = ["# exec mrbtest", "dummy dots line", mrbtest[6, mrbtest.size]]
+    mrbtest_header = 'mrbtest - Embeddable Ruby Test'
+    result = ["# exec mrbtest", "dummy dots line"]
+    if mrbtest[0] == mrbtest_header
+      result << mrbtest[6, mrbtest.size]
+    else
+      pos = mrbtest.index(mrbtest_header)
+      pos = mrbtest.size  if pos.nil? or pos < 1 or pos > mrbtest.size
+      result << mrbtest[1..(pos-1)]
+    end
     if data[:mrubytest_rb]
       result << "# exec mruby test with ruby script"
       result << data[:mrubytest_rb]
@@ -59,9 +67,6 @@ class MrubyReport
       result << data[:mrubytest_mrb]
     end
 
-    File.open("t", "w") do |fp|
-      fp.puts result.join("\n").split("\n")
-    end
     test = msg_parser(result.join("\n").split("\n"))
 
     data.merge(test)
@@ -258,9 +263,15 @@ class MrubyReportGenerator
     load_files
     analyze_git
 
+    if File.exist? REPORT_DIR
+      FileUtils.rm_r REPORT_DIR
+    end
+    FileUtils.mkdir_p REPORT_DIR
+
     @reports.each do |id, reports|
       filepath = File.join(REPORT_DIR, "#{id}.html")
       File.open(filepath, 'w') do |fp|
+        puts filepath
         fp.write ERB.new(File.open(@buildreport_template).read).result(binding)
       end
     end

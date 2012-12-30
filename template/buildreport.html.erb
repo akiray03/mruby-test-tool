@@ -19,14 +19,24 @@
     </style>
   </head>
   <body>
+    <h1>mruby build & test report</h1>
+
     <% user, repo, comm = id.split('-') %>
     <% url = "http://github.com/#{user}/#{repo}/commit/#{comm}" %>
-    <h1>mruby build & test report (<a href="<%= url %>" target="_blank"><%= id %></a>)</h1>
+    <ul>
+      <li><a href="<%= url %>" target="_blank">commit info on github</a></li>
+      <% @gitlog.each do |reponame, val| %>
+        <% next unless reponame == "#{user}-#{repo}" %>
+        <% if val[:gitlog].map{|v| v[0] }.include?(comm) %>
+          <li><a href="<%= reponame %>.html">back to <%= reponame %></a></li>
+        <% end %>
+      <% end %>
+  </ul>
 
     <h2>mrbtest</h2>
     <table border="1">
       <tr>
-        <% %w(Name Build-Status Mrbtest-Status Total OK KO Crash Time Fail Msg).each do |key| %>
+        <% %w(Name Build-Status Mrbtest-Status Total OK KO Crash Fail Msg).each do |key| %>
           <th><%= key %></th>
         <% end %>
       </tr>
@@ -41,7 +51,6 @@
           <td><%= report.test[:ok] %></td>
           <td><%= report.test[:ko] %></td>
           <td><%= report.test[:crash] %></td>
-          <td><%= report.test[:time] %></td>
           <td><%= report.test[:fail].join('<br/>') %></td>
           <td><%= report.test[:msg].join('<br/>') %></td>
         </tr>
@@ -52,7 +61,7 @@
       <h2>posix test</h2>
       <table border="1">
         <tr>
-          <% %w(Name Status Total OK KO Crash Time Fail Msg).each do |key| %>
+          <% %w(Name Status Total OK KO Crash Fail Msg).each do |key| %>
             <th><%= key %></th>
           <% end %>
         </tr>
@@ -66,7 +75,6 @@
             <td><%= report.posix[:ok] %></td>
             <td><%= report.posix[:ko] %></td>
             <td><%= report.posix[:crash] %></td>
-            <td><%= report.posix[:time] %></td>
             <td><%= report.posix[:fail].join('<br/>') %></td>
             <td><%= report.posix[:msg].join('<br/>') %></td>
           </tr>
