@@ -199,7 +199,7 @@ class MrubyReportGenerator
       :git => 'git',
       :repositories => {},
     }).merge((opts or {}))
-    @files = Dir.glob("#{RESULT_DIR}/*.yml")
+    @files = Dir.glob("#{RESULT_DIR}/*.yml").select{|fname| not fname.include?('akiray03') }
 
     if not File.exist? REPORT_DIR
       FileUtils.mkdir_p REPORT_DIR
@@ -228,6 +228,7 @@ class MrubyReportGenerator
     end.uniq
 
     @gitlog = {}
+    @commitlog = {}
 
     @workdir = mktmpdir
     Dir.chdir(@workdir) do
@@ -238,6 +239,10 @@ class MrubyReportGenerator
         Dir.chdir(reponame) do
           `git log --oneline -n #{LOG_MAX}`.split("\n").each do |line|
             gitlog << line.split("\s", 2)
+          end
+          gitlog.each do |val|
+            comm, msg = val
+            @commitlog["#{reponame}-#{comm}"] = `git show #{comm}`
           end
         end
         @gitlog[reponame] = {:url => url, :gitlog => gitlog}
@@ -250,6 +255,10 @@ class MrubyReportGenerator
               `git checkout #{branch}`
               `git log --oneline -n #{LOG_MAX}`.split("\n").each do |line|
                 gitlog << line.split("\s", 2)
+              end
+              gitlog.each do |val|
+                comm, msg = val
+                @commitlog["#{reponame}-#{comm}"] = `git show #{comm}`
               end
             end
             @gitlog["#{reponame}-#{branch}"] = {:url => url, :gitlog => gitlog}

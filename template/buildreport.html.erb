@@ -19,18 +19,30 @@
     </style>
   </head>
   <body>
-    <h1>mruby build & test report</h1>
-
     <% user, repo, comm = id.split('-') %>
     <% url = "http://github.com/#{user}/#{repo}/commit/#{comm}" %>
+
+    <h1>mruby build & test report
+      <span style="font-size:small;"><%= "(#{user}/#{repo} - #{comm})" %></span>
+    </h1>
+
     <ul>
       <li><a href="<%= url %>" target="_blank">commit info on github</a></li>
+      <%
+        gitlog = @gitlog["#{user}-#{repo}"]
+        gitlog = gitlog ? gitlog[:gitlog] : []
+        commit_msg = gitlog.find{|v| v[0] == comm }
+      %>
       <% @gitlog.each do |reponame, val| %>
         <% next unless reponame == "#{user}-#{repo}" %>
         <% if val[:gitlog].map{|v| v[0] }.include?(comm) %>
           <li><a href="<%= reponame %>.html">back to <%= reponame %></a></li>
         <% end %>
       <% end %>
+      <li>
+      <pre><%= @commitlog[id].to_s.split('diff --git ').first %></pre>
+      <a href="#commitlog">commit log</a>
+      </li>
   </ul>
 
     <h2>mrbtest</h2>
@@ -128,5 +140,9 @@
         <% end %>
       </table>
     <% end %>
+
+    <h2><a name="commitlog">commit log</a></h2>
+      <pre><%= @commitlog[id] %></pre>
+
   </body>
 </html>
