@@ -40,7 +40,7 @@
         <% end %>
       <% end %>
       <li>
-      <pre><%= CGI.escapeHTML @commitlog[id].to_s.split('diff --git ').first %></pre>
+      <pre><%= CGI.escapeHTML @commitlog[id].to_s.split('diff --git ').first.to_s %></pre>
       <a href="#commitlog">commit log</a>
       </li>
   </ul>
@@ -142,7 +142,7 @@
     <% end %>
 
     <h2><a name="commitlog">commit log</a></h2>
-      <pre><%= CGI.escapeHTML @commitlog[id].to_s %></pre>
+      <pre><%= CGI.escapeHTML @commitlog[id].to_s.to_s %></pre>
 
   </body>
 </html>
