@@ -8,6 +8,7 @@ require 'yaml'
 require 'uri'
 require 'erb'
 require 'time'
+require 'cgi'
 
 if $logger.nil?
   $logger = Logger.new(STDOUT)
