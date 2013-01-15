@@ -273,6 +273,7 @@ class MrubyReportGenerator
     end
     FileUtils.mkdir_p REPORT_DIR
 
+=begin
     @reports.each do |id, reports|
       filepath = File.join(REPORT_DIR, "#{id}.html")
       File.open(filepath, 'w') do |fp|
@@ -280,10 +281,22 @@ class MrubyReportGenerator
         fp.write ERB.new(File.open(@buildreport_template).read).result(binding)
       end
     end
+=end
 
     @gitlog.each do |reponame, val|
       gitlog = val[:gitlog]
-      url = val[:url]
+      url    = val[:url]
+      gitlog.each do |log|
+        id = "#{reponame}-#{log[0]}"
+        reports = @reports[id]
+        filepath = File.join(REPORT_DIR, "#{id}.html")
+        if reports && (not File.exist?(filepath))
+          File.open(filepath, 'w') do |fp|
+            puts filepath
+            fp.write ERB.new(File.open(@buildreport_template).read).result(binding)
+          end
+        end
+      end
       filepath = File.join(REPORT_DIR, "#{reponame}.html")
       File.open(filepath, 'w') do |fp|
         fp.write ERB.new(File.open(@repository_template).read).result(binding)
