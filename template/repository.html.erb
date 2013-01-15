@@ -4,12 +4,25 @@
     <title>mruby build & test report</title>
   </head>
   <body>
+    <div style="background-color:#a0a0a0;">
+      <% @gitlog.each do |repo, val| %>
+        <% filepath = File.join(REPORT_DIR, "#{repo}.html") %>
+        <% if repo == reponame %>
+          <b><%= repo %></b>
+        <% else %>
+          <a href="<%= repo %>.html" target="body"><%= repo %></a>
+        <% end %>
+      <% end %>
+    </div>
+
     <h1>mruby build & test report (<a href="<%= url %>"><%= reponame %></a>)</h1>
     <% reponame = reponame.split('-')[0, 2].join('-')  if reponame.split('-').size >= 3 %>
     <table border="1">
       <tr>
         <th>Hash</th>
         <th>Comment</th>
+        <th>Author</th>
+        <th>Date</th>
       </tr>
       <% gitlog.each do |log| %>
         <tr>
@@ -22,6 +35,20 @@
             <td><%= log[0] %></td>
           <% end %>
           <td><%= log[1] %></td>
+          <%
+            author, date = nil
+            commit = @commitlog[id].to_s.split(/\n/)
+            commit.each do |line|
+              case line
+              when /^Author\:/
+                author = line.sub('Author: ', '')
+              when /^Date\:/
+                date = line.sub(/^Date\:\s+/, '')
+              end
+            end
+           %>
+          <td><%= author %></td>
+          <td><%= date %></td>
         </tr>
       <% end %>
     </table>

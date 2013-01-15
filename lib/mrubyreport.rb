@@ -290,14 +290,10 @@ class MrubyReportGenerator
       end
     end
 
+    repofilepath = File.join(REPORT_DIR, "#{@gitlog.keys.first}.html")
     filepath = File.join(REPORT_DIR, "index.html")
     File.open(filepath, 'w') do |fp|
-      fp.write ERB.new(File.open(@index_template).read).result(binding)
-    end
-
-    filepath = File.join(REPORT_DIR, "frame_menu.html")
-    File.open(filepath, 'w') do |fp|
-      fp.write ERB.new(File.open(@frame_menu_template).read).result(binding)
+      fp.write File.open(repofilepath).read
     end
 
     FileUtils.rm_r @workdir

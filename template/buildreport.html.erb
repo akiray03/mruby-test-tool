@@ -19,6 +19,13 @@
     </style>
   </head>
   <body>
+    <div style="background-color:#a0a0a0;">
+      <% @gitlog.each do |reponame, val| %>
+        <% filepath = File.join(REPORT_DIR, "#{reponame}.html") %>
+        <a href="<%= reponame %>.html" target="body"><%= reponame %></a>
+      <% end %>
+    </div>
+
     <% user, repo, comm = id.split('-') %>
     <% url = "http://github.com/#{user}/#{repo}/commit/#{comm}" %>
 
