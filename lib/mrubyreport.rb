@@ -44,31 +44,26 @@ class MrubyReport
   def mrbtest_result_parser(data)
     mrbtest = []
     flag = false
+    test = testreport_default_value
+
     data[:stdout].split("\n").each do |line|
-      flag = false  if line == "# exec mruby test with ruby script"
-      mrbtest << line  if flag
-      flag = (line == "./mrbtest")  unless flag
+      case line
+      when /^Total\:\s/
+        test[:total] += line.split(":").last.to_i
+      when /^\s+OK\:\s/
+        test[:ok] += line.split(":").last.to_i
+      when /^\s+KO\:\s/
+        test[:ko] += line.split(":").last.to_i
+      when /^Crash\:\s/
+        test[:crash] += line.split(":").last.to_i
+      when /^\sTime\:\s/
+        test[:time] << line.split(":").last.strip
+      when /^Fail\:\s/
+        test[:fail] << line
+      else
+        # skip
+      end
     end
-
-    mrbtest_header = 'mrbtest - Embeddable Ruby Test'
-    result = ["# exec mrbtest", "dummy dots line"]
-    if mrbtest[0] == mrbtest_header
-      result << mrbtest[6, mrbtest.size]
-    else
-      pos = mrbtest.index(mrbtest_header)
-      pos = mrbtest.size  if pos.nil? or pos < 1 or pos > mrbtest.size
-      result << mrbtest[1..(pos-1)]
-    end
-    if data[:mrubytest_rb]
-      result << "# exec mruby test with ruby script"
-      result << data[:mrubytest_rb]
-    end
-    if data[:mrubytest_mrb]
-      result << "# exec mruby test with mrb"
-      result << data[:mrubytest_mrb]
-    end
-
-    test = msg_parser(result.join("\n").split("\n"))
 
     data.merge(test)
   end
