@@ -15,14 +15,14 @@
       <% end %>
     </div>
 
+    <% architectures = %w(centos32bit centos64bit freebsd32bit freebsd64bit mac-lion mac-ppc netbsd32bit netbsd64bit netbsd_arm netbsd_mips openbsd32bit openbsd64bit ubuntu32bit ubuntu64bit).sort %>
     <h1>mruby build & test report (<a href="<%= url %>"><%= reponame %></a>)</h1>
     <% reponame = reponame.split('-')[0, 2].join('-')  if reponame.split('-').size >= 3 %>
     <table border="1">
       <tr>
-        <th>Hash</th>
-        <th>Comment</th>
-        <th>Author</th>
-        <th>Date</th>
+        <th>CommitID</th>
+        <th colspan="<%= architectures.size %>">status</th>
+        <th>Comment / Author / Date</th>
       </tr>
       <% gitlog.each do |log| %>
         <tr>
@@ -34,7 +34,21 @@
           <% else %>
             <td><%= log[0] %></td>
           <% end %>
-          <td><%= log[1] %></td>
+          <% architectures.each do |arch| %>
+            <% report = @reports[id] ? @reports[id][arch] : nil %>
+            <% if report && report.success? %>
+              <td style="background-color:#99ff99;">
+                <a href="<%= "#{id}.html##{arch}" %>" title="<%= "build & test success on #{arch}" %>">o</a>
+              </td>
+            <% elsif report %>
+              <td style="background-color:#ff9999;">
+                <a href="<%= "#{id}.html##{arch}" %>" title="<%= "build failed on #{arch}" %>">x</a>
+              </td>
+            <% else %>
+              <td>-</td>
+            <% end %>
+          <% end %>
+          <td>
           <%
             author, date = nil
             commit = @commitlog[id].to_s.split(/\n/)
@@ -47,8 +61,12 @@
               end
             end
            %>
-          <td><%= author %></td>
-          <td><%= date %></td>
+           <%= log[1] %>
+           <% if author or date %>
+             <br />
+             <%= author %> / <%= date %>
+           <% end %>
+          </td>
         </tr>
       <% end %>
     </table>
