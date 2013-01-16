@@ -48,7 +48,7 @@
         <% end %>
       <% end %>
       <li>
-      <pre><%= CGI.escapeHTML @commitlog[id].to_s.split('diff --git ').first.to_s %></pre>
+      <pre><%= CGI.escapeHTML @commitlog[id].to_s.split(/^diff\s/).first.to_s %></pre>
       <a href="#commitlog">commit log</a>
       </li>
   </ul>
