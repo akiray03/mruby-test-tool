@@ -30,9 +30,9 @@
           <% if @reports[id] %>
             <% status = @reports[id].all?{|hostname,rep| rep.success? } %>
             <% style = status ? 'background-color:#99ff99' : 'background-color:#ff9999' %>
-            <td style="<%= style %>"><a href="<%= id %>.html"><%= log[0] %></a></td>
+            <td style="<%= style %>"><a name="<%= id %>"></a><a href="<%= id %>.html"><%= log[0] %></a></td>
           <% else %>
-            <td><%= log[0] %></td>
+            <td><a name="<%= id %>"></a><%= log[0] %></td>
           <% end %>
           <% architectures.each do |arch| %>
             <% report = @reports[id] ? @reports[id][arch] : nil %>
