@@ -15,7 +15,7 @@ if $logger.nil?
   $logger.level = Logger::DEBUG
 end
 
-LOG_MAX = 50
+LOG_MAX = 100
 DIR = File.dirname(__FILE__)
 
 class MrubyReport
