@@ -10,7 +10,7 @@
         <% if repo == reponame %>
           <b><%= repo %></b>
         <% else %>
-          <a href="<%= reponame %>.html"><%= reponame %></a>
+          <a href="<%= repo %>.html"><%= repo %></a>
         <% end %>
       <% end %>
     </div>
@@ -48,7 +48,7 @@
               <td>-</td>
             <% end %>
           <% end %>
-          <td>
+          <td style="font-size:small;">
           <%
             author, date = nil
             commit = @commitlog[id].to_s.split(/\n/)
@@ -62,6 +62,9 @@
             end
            %>
            <%= log[1] %>
+           <% user, repo, comm = id.split('-') %>
+           <% url = "http://github.com/#{user}/#{repo}/commit/#{comm}" %>
+           (<a href="<%= url %>" target="_blank">github</a>)
            <% if author or date %>
              <br />
              <%= author %> / <%= date %>

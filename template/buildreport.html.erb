@@ -19,6 +19,7 @@
     </style>
   </head>
   <body>
+    <a name="top"></a>
     <div style="background-color:#a0a0a0;">
       <% @gitlog.each do |reponame, val| %>
         <% filepath = File.join(REPORT_DIR, "#{reponame}.html") %>
@@ -101,7 +102,7 @@
       </table>
     <% end %>
 
-    <h2>environment</h2>
+    <h2>environment <span style="font-size:small;"><a href="#top">#top</a></span></h2>
     <table border='1'>
       <tr>
         <th>Name</th>
@@ -121,7 +122,7 @@
     <h2>Build Log</h2>
     <% reports.keys.sort.each do |hostname| %>
       <% report = reports[hostname] %>
-      <h3><a name="<%= hostname %>"><%= hostname %></a></h3>
+      <h3><a name="<%= hostname %>"><%= hostname %></a> <span style="font-size:small;"><a href="#top">#top</a></span></h3>
       <table border='1' style="width:90%;">
         <tr>
           <th style="width:100px;">task</th>
@@ -148,7 +149,7 @@
       </table>
     <% end %>
 
-    <h2><a name="commitlog">commit log</a></h2>
+    <h2><a name="commitlog">commit log</a> <span style="font-size:small;"><a href="#top">#top</a></span></h2>
       <pre><%= CGI.escapeHTML @commitlog[id].to_s.to_s %></pre>
 
   </body>
