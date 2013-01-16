@@ -16,6 +16,7 @@
     </div>
 
     <% architectures = %w(centos32bit centos64bit freebsd32bit freebsd64bit mac-lion mac-ppc netbsd32bit netbsd64bit netbsd_arm netbsd_mips openbsd32bit openbsd64bit ubuntu32bit ubuntu64bit).sort %>
+    <% user, repo = reponame.split("-"); url = "https://github.com/#{user}/#{repo}" %>
     <h1>mruby build & test report (<a href="<%= url %>"><%= reponame %></a>)</h1>
     <% reponame = reponame.split('-')[0, 2].join('-')  if reponame.split('-').size >= 3 %>
     <table border="1">
