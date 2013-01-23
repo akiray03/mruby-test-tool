@@ -15,7 +15,7 @@ if $0 == __FILE__
   when 1
     args = ARGV[0]
   when 2
-    args = ARGV
+    args = ARGV[0, 2]
   else
     args = ['iij/mruby', 'iij']
   end
