@@ -222,7 +222,7 @@ class MrubyBuild
     YAML.dump(@result, File.open(result_filepath, 'w'))
     $logger.info("save done: #{filename}")
 
-    cleanup
+    cleanup  unless ARGV.include?('--no-clean')
 
     self
   end
