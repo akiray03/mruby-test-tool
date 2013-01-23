@@ -10,15 +10,9 @@ $LOAD_PATH.unshift File.expand_path('../../lib', __FILE__)
 require 'mrubybuild'
 
 if $0 == __FILE__
-  args = nil
-  case ARGV.size
-  when 1
-    args = ARGV[0]
-  when 2
-    args = ARGV[0, 2]
-  else
-    args = ['iij/mruby', 'iij']
-  end
+  args = ARGV[0, 2]
+  args = ['iij/mruby', 'iij']  if args.empty?
+
   m = MrubyBuild.new(*args)
   #m.zipball_path = 'spec/iij.zip'
   m.unzip
