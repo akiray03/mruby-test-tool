@@ -185,7 +185,20 @@ class MrubyBuild
       end
     end
 
+    @result[:filesize] = fetch_filesize
+
     self
+  end
+
+  def fetch_filesize
+    data = {}
+    %w(bin/mruby bin/mrbc bin/mirb lib/libmruby.a lib/libmruby_core.a test/mrbtest).each do |f|
+      path = File.join(@workdir, 'build', 'host',  f)
+      if File.exist?(path)
+        data[f] = File.size(path)
+      end
+    end
+    data
   end
 
   def result_filename
