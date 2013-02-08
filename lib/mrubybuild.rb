@@ -196,7 +196,7 @@ class MrubyBuild
       path = File.join(@workdir, 'build', 'host',  f)
       if File.exist?(path)
         tmp = File.join('/tmp', "mruby.filesize.#{$$}")
-        File.cp path, tmp
+        File.copy path, tmp
         `strip #{tmp}`
         data[f] = File.size(tmp)
         File.delete tmp
