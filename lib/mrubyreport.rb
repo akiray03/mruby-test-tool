@@ -18,6 +18,18 @@ end
 LOG_MAX = 100
 DIR = File.dirname(__FILE__)
 
+class Integer
+  def to_c
+    str = to_s
+    tmp = ""
+    while(str =~ /([-+]?.*\d)(\d\d\d)/) do
+      str = $1
+      tmp = ",#{$2}" + tmp
+    end
+    str + tmp
+  end
+end
+
 class MrubyReport
   def initialize(filepath)
     @data = YAML.load(File.open(filepath))
@@ -166,6 +178,16 @@ class MrubyReport
 
   def date
     @data[:date]
+  end
+
+  def filesize
+    @data[:filesize]
+  end
+
+  def filesize_mruby
+    if @data[:filesize] && @data[:filesize]['bin/mruby']
+      @data[:filesize]['bin/mruby'].to_i.to_c
+    end
   end
 
   def status

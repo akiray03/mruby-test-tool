@@ -54,9 +54,16 @@
   </ul>
 
     <h2>mrbtest</h2>
+    <% filesize_list = %w(bin/mruby lib/libmruby.a) %>
     <table border="1">
       <tr>
         <% %w(Name Build-Status Mrbtest-Status Total OK KO Crash Fail Msg).each do |key| %>
+          <th rowspan="2"><%= key %></th>
+        <% end %>
+        <th colspan="<%= filesize_list.size %>">FileSize (Byte)</th>
+      </tr>
+      <tr>
+        <% filesize_list.each do |key| %>
           <th><%= key %></th>
         <% end %>
       </tr>
@@ -73,6 +80,9 @@
           <td><%= report.test[:crash] %></td>
           <td><%= report.test[:fail].join('<br/>') %></td>
           <td><%= report.test[:msg].join('<br/>') %></td>
+          <% filesize_list.each do |key| %>
+            <td><%= report.filesize[key].to_i.to_c  if report.filesize && report.filesize[key] %></td>
+          <% end %>
         </tr>
       <% end %>
     </table>
