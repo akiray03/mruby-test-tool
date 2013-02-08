@@ -81,7 +81,7 @@
           <td><%= report.test[:fail].join('<br/>') %></td>
           <td><%= report.test[:msg].join('<br/>') %></td>
           <% filesize_list.each do |key| %>
-            <td><%= report.filesize[key].to_c  if report.filesize && report.filesize[key].is_a?(Integer) %></td>
+            <td style="text-align:right;"><%= report.filesize[key].to_c  if report.filesize && report.filesize[key].is_a?(Integer) %></td>
           <% end %>
         </tr>
       <% end %>
