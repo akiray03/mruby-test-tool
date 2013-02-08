@@ -195,11 +195,8 @@ class MrubyBuild
     %w(bin/mruby bin/mrbc bin/mirb lib/libmruby.a lib/libmruby_core.a test/mrbtest).each do |f|
       path = File.join(@workdir, 'build', 'host',  f)
       if File.exist?(path)
-        tmp = File.join('/tmp', "mruby.filesize.#{$$}")
-        FileUtils.copy path, tmp
-        `strip #{tmp}`
-        data[f] = File.size(tmp)
-        FileUtils.rm tmp
+        `strip #{path}`
+        data[f] = File.size(path)
       end
     end
     data
